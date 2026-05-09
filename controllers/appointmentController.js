@@ -1,6 +1,8 @@
 import Appointment from "../models/Appointment.js";
 
 export const createAppointment = async (req, res) => {
+    console.log("Creating appointment for user:", req.user.id);
+    console.log("Request body:", req.body);
   try {
     const { service, doctor, date, time, price } = req.body;
 
