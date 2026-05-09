@@ -7,6 +7,10 @@ import { sendEmail } from "../utils/sendEmail.js";
 
 // ================= REGISTER =================
 export const register = async (req, res) => {
+
+  console.log("Register endpoint hit");
+  console.log(req.body);
+
   try {
     const { name, email, phone, password } = req.body;
 
