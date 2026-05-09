@@ -8,7 +8,7 @@ const appointmentSchema = new mongoose.Schema(
     },
     service: String,
     doctor: String,
-    date: Number,
+    date: Date,
     time: String,
     price: String,
   },
