@@ -6,6 +6,8 @@ import authRoutes from "./routes/authRoutes.js";
 import session from "express-session";
 import passport from "./config/passport.js";
 
+import appointmentRoutes from "./routes/appointmentRoutes.js";
+
 dotenv.config();
 
 const app = express();
@@ -27,8 +29,14 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
-// ROUTES
+// ROUTES Login & Register
 app.use("/api", authRoutes);
+
+// ROUTES Appointments
+app.use("/api/appointments", appointmentRoutes);
+
+
+
 
 // TEST ROUTE
 app.get("/", (req, res) => {
