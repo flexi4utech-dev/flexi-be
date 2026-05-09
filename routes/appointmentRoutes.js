@@ -22,8 +22,10 @@ router.get("/my", protect, async (req, res) => {
   res.json(appointments);
 });
 
-router.delete("/:id", protect, async (req, res) => {
+router.put("/:id", protect, async (req, res) => {
   try {
+    const { status, reason } = req.body;
+
     const appointment = await Appointment.findById(req.params.id);
 
     if (!appointment) {
@@ -34,9 +36,18 @@ router.delete("/:id", protect, async (req, res) => {
       return res.status(403).json({ message: "Not allowed" });
     }
 
-    await appointment.deleteOne();
+    // 🔥 status update
+    appointment.status = status;
+    appointment.reason = reason;
 
-    res.json({ message: "Appointment cancelled" });
+    await appointment.save();
+
+    // 🔥 doctor notify (simple log / hook)
+    console.log(
+      `Doctor notified: ${appointment.doctor} appointment cancelled`
+    );
+
+    res.json({ message: "Appointment cancelled", appointment });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
