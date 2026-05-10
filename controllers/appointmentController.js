@@ -1,5 +1,6 @@
 import Appointment from "../models/Appointment.js";
 
+console.log("AppointmentController loaded");
 // ─── Helper: UTC-safe day boundaries ───────────────────────────────────────
 function getDayBounds(dateInput) {
   const d = new Date(dateInput);
@@ -46,6 +47,7 @@ export const createAppointment = async (req, res) => {
       status: status || "Confirmed",
     });
 
+    console.log("Appointment created:", appointment);
     return res.status(201).json({ message: "Appointment booked successfully", appointment });
   } catch (err) {
     console.error("createAppointment error:", err);
@@ -62,6 +64,7 @@ export const getMyAppointments = async (req, res) => {
       .lean();
 
     return res.json(appointments);
+    console.log(`Fetched ${appointments.length} appointments for user ${req.user.id}`);
   } catch (err) {
     console.error("getMyAppointments error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -92,6 +95,7 @@ export const getAppointments = async (req, res) => {
       .lean();
 
     return res.json(appointments);
+    console.log(`Fetched appointments for doctor ${doctor} on ${date}:`, appointments);
   } catch (err) {
     console.error("getAppointments error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -133,6 +137,7 @@ export const updateAppointment = async (req, res) => {
           date: { $gte: bounds.start, $lte: bounds.end },
         });
         if (conflict) {
+            console.log("Reschedule conflict:", conflict);
           return res.status(400).json({ message: "This slot is already booked. Choose another time." });
         }
         appointment.date = new Date(date);
@@ -168,6 +173,7 @@ export const deleteAppointment = async (req, res) => {
     }
 
     await appointment.deleteOne();
+    console.log("Appointment deleted:", id);
     return res.json({ message: "Appointment deleted" });
   } catch (err) {
     console.error("deleteAppointment error:", err);
