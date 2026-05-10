@@ -25,7 +25,6 @@ export const createAppointment = async (req, res) => {
         if (exists) {
             return res.status(400).json({ message: "Slot already booked" });
         }
-
         const appointment = await Appointment.create({
             user: req.user.id,
             service,
