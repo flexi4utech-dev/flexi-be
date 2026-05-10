@@ -10,7 +10,19 @@ router.post("/", protect, createAppointment);
 router.get("/", async (req, res) => {
   const { doctor, date } = req.query;
 
-  const appointments = await Appointment.find({ doctor, date });
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const appointments = await Appointment.find({
+    doctor,
+    date: {
+      $gte: startOfDay,
+      $lte: endOfDay,
+    },
+  });
 
   res.json(appointments);
 });
