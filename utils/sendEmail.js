@@ -1,15 +1,10 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "YOUR_EMAIL",
-    pass: "APP_PASSWORD",
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (to, subject, text) => {
-  await transporter.sendMail({
+  await resend.emails.send({
+    from: "flexi4u.app <onboarding@resend.dev>",
     to,
     subject,
     text,

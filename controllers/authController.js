@@ -132,7 +132,7 @@ export const forgotPassword = async (req, res) => {
     user.resetTokenExpiry = Date.now() + 10 * 60 * 1000; // 10 min
     await user.save();
 
-    const resetLink = `http://localhost:5173/reset/${token}`;
+    const resetLink = `https://flexi-fe.vercel.app/reset/${token}`;
 
     await sendEmail(email, "Reset Password", `Click here: ${resetLink}`);
 
