@@ -7,7 +7,7 @@ import passport from "./config/passport.js";
 
 import authRoutes        from "./routes/authRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
-import doctorRoutes      from "./routes/doctorRoutes.js";
+import doctorRoutes      from "./routes/Doctorroutes.js";
 
 dotenv.config();
 
