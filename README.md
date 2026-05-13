@@ -214,7 +214,7 @@ DELETE /api/appointments/:id
 ## 👨‍💻 Author
 
 **Md Fuzail**
-📍 Jaipur,
+📍 Jaipur / Patna
 📧 [saiffardin1@gmail.com](mailto:saiffardin1@gmail.com)
 
 ---
