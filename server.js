@@ -30,7 +30,7 @@ mongoose
   .catch((err) => console.log(err));
 
 // ROUTES Login & Register
-app.use("/api", authRoutes);
+app.use("/api/auth", authRoutes);
 
 // ROUTES Appointments
 app.use("/api/appointments", appointmentRoutes);
