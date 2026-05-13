@@ -69,24 +69,19 @@ export const sendOtp = async (req, res) => {
     const { email } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
-    }
+    if (!user) return res.status(400).json({ message: "User not found" });
 
-    const otp = otpGenerator.generate(6, {
-      digits: true,
-      alphabets: false,
-      specialChars: false,
-    });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.otp = otp;
-    user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min
+    user.otpExpiry = Date.now() + 5 * 60 * 1000;
     await user.save();
 
-    await sendEmail(email, "Your OTP", `Your OTP is ${otp}`);
+    console.log("OTP:", otp); // 🔥 TEMP (frontend me dikha dena)
 
-    res.json({ message: "OTP sent successfully" });
+    res.json({ message: "OTP sent", otp }); // ⚠️ prod me otp mat bhejna
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -98,76 +93,37 @@ export const verifyOtp = async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    if (
-      !user ||
-      user.otp !== otp ||
-      user.otpExpiry < Date.now()
-    ) {
+    if (!user || user.otp !== otp || user.otpExpiry < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    user.otp = null;
-    user.otpExpiry = null;
-    await user.save();
-
-    res.json({ message: "OTP verified successfully" });
+    res.json({ message: "OTP verified" });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
 // ================= FORGOT PASSWORD =================
-export const forgotPassword = async (req, res) => {
+export const resetPasswordWithOtp = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, otp, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
-    }
 
-    const token = crypto.randomBytes(32).toString("hex");
-
-    user.resetToken = token;
-    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000; // 10 min
-    await user.save();
-
-    const resetLink = `https://flexi-fe.vercel.app/reset/${token}`;
-
-    await sendEmail(email, "Reset Password", `Click here: ${resetLink}`);
-
-    res.json({ message: "Reset link sent to email" });
-  } catch (err) {
-  console.log("FORGOT ERROR:", err); // 🔥 ADD THIS
-  res.status(500).json({ message: "Server error" });
-}
-};
-
-// ================= RESET PASSWORD =================
-export const resetPassword = async (req, res) => {
-  try {
-    const { token, password } = req.body;
-
-    const user = await User.findOne({
-      resetToken: token,
-      resetTokenExpiry: { $gt: Date.now() },
-    });
-
-    if (!user) {
-      return res.status(400).json({ message: "Invalid or expired token" });
+    if (!user || user.otp !== otp || user.otpExpiry < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
     const hash = await bcrypt.hash(password, 10);
 
     user.password = hash;
-    user.resetToken = null;
-    user.resetTokenExpiry = null;
+    user.otp = null;
+    user.otpExpiry = null;
 
     await user.save();
 
     res.json({ message: "Password reset successful" });
   } catch (err) {
-  console.log("FORGOT ERROR:", err); // 🔥 ADD THIS
-  res.status(500).json({ message: "Server error" });
-}
+    res.status(500).json({ message: "Server error" });
+  }
 };
