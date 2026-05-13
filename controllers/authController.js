@@ -138,8 +138,9 @@ export const forgotPassword = async (req, res) => {
 
     res.json({ message: "Reset link sent to email" });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
+  console.log("FORGOT ERROR:", err); // 🔥 ADD THIS
+  res.status(500).json({ message: "Server error" });
+}
 };
 
 // ================= RESET PASSWORD =================
@@ -166,6 +167,7 @@ export const resetPassword = async (req, res) => {
 
     res.json({ message: "Password reset successful" });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
+  console.log("FORGOT ERROR:", err); // 🔥 ADD THIS
+  res.status(500).json({ message: "Server error" });
+}
 };
