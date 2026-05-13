@@ -1,0 +1,230 @@
+# 🏥 Flexi4U – Smart Health & Wellness Platform
+
+Flexi4U is a full-stack web application designed to provide **smart physiotherapy, appointment booking, and health management** with a modern UI and secure authentication system.
+
+---
+
+## 🚀 Features
+
+### 🔐 Authentication System
+
+* Email & Password Login
+* User Registration with OTP Verification
+* Forgot Password using OTP Reset 🔥
+* Secure JWT-based authentication
+* Role-based login (User / Doctor)
+
+---
+
+### 📅 Appointment System
+
+* Book appointments with doctors
+* Real-time slot validation (no double booking)
+* Upcoming / Past / Cancelled filtering
+* Reschedule & Cancel options
+
+---
+
+### 🧠 Smart UI/UX
+
+* Glassmorphism design ✨
+* Fully responsive (mobile + desktop)
+* Animated OTP input (Instagram-style)
+* Password show/hide 👁️
+* Live validation (confirm password, errors)
+
+---
+
+### 📊 Dashboard
+
+* User profile management
+* Health data (BMI, conditions, etc.)
+* Clean navigation system
+
+---
+
+### 📩 OTP System
+
+* Email OTP for:
+
+  * Signup verification
+  * Password reset
+* Resend OTP timer (30 sec)
+* Auto-focus OTP input boxes
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* React (Vite)
+* TypeScript
+* Tailwind CSS
+* Wouter (routing)
+* React Query
+
+### Backend
+
+* Node.js
+* Express.js
+* MongoDB + Mongoose
+* JWT Authentication
+* OTP Generator
+
+---
+
+## 📁 Project Structure
+
+```
+flexi-dashboard/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   │   ├── LoginPage.tsx
+│   │   ├── BookAppointment.tsx
+│   │   ├── Appointments.tsx
+│   │   ├── Dashboard.tsx
+│   ├── context/
+│   │   └── AuthProvider.tsx
+│   └── App.tsx
+│
+flexi-backend/
+├── controllers/
+│   ├── authController.js
+│   ├── appointmentController.js
+├── models/
+│   ├── Users.js
+│   ├── Appointment.js
+├── routes/
+│   ├── authRoutes.js
+│   ├── appointmentRoutes.js
+└── server.js
+```
+
+---
+
+## ⚙️ Installation
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/your-repo/flexi4u.git
+cd flexi4u
+```
+
+---
+
+### 2️⃣ Backend Setup
+
+```bash
+cd flexi-backend
+npm install
+```
+
+Create `.env` file:
+
+```
+MONGO_URI=your_mongodb_url
+JWT_SECRET=your_secret
+PORT=5000
+```
+
+Run server:
+
+```bash
+npm start
+```
+
+---
+
+### 3️⃣ Frontend Setup
+
+```bash
+cd flexi-dashboard
+npm install
+npm run dev
+```
+
+---
+
+## 🌐 API Endpoints
+
+### Auth
+
+```
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/send-otp
+POST /api/auth/verify-otp
+POST /api/auth/reset-password-otp
+```
+
+### Appointments
+
+```
+POST /api/appointments
+GET /api/appointments
+DELETE /api/appointments/:id
+```
+
+---
+
+## 🔒 Security Features
+
+* Password hashing using bcrypt
+* JWT token authentication
+* OTP expiry validation
+* Duplicate booking prevention
+* Input validation (frontend + backend)
+
+---
+
+## 📸 UI Highlights
+
+* Glassmorphism Navbar
+* Animated Image Slider
+* OTP Verification UI
+* Responsive Footer with newsletter
+
+---
+
+## 🚀 Deployment
+
+### Frontend
+
+* Vercel
+
+### Backend
+
+* Render
+
+---
+
+## 🧪 Future Improvements
+
+* Google OAuth Login
+* Payment Integration
+* Doctor panel dashboard
+* Push notifications
+* AI-based health suggestions
+
+---
+
+## 👨‍💻 Author
+
+**Md Fuzail**
+📍 Jaipur,
+📧 [saiffardin1@gmail.com](mailto:saiffardin1@gmail.com)
+
+---
+
+## ⭐ Support
+
+If you like this project, give it a ⭐ on GitHub!
+
+---
+
+## 📌 License
+
+This project is licensed under the MIT License.
