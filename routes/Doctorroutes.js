@@ -5,6 +5,41 @@ import Appointment from "../models/Appointment.js";
 
 const router = express.Router();
 
+// ─── GET /api/doctors — PUBLIC — approved doctors list (for patient frontend) ─
+router.get("/", async (req, res) => {
+  try {
+    const doctors = await Doctor.find({ approved: true })
+      .select("-password -otp -otpExpiry")
+      .lean();
+
+    const mapped = doctors.map((d) => ({
+      id:             d._id,
+      name:           d.name,
+      specialty:      d.specialization || "General",
+      exp:            d.experience ? `${d.experience} yrs` : "—",
+      fees:           `₹${d.fees || 0}`,
+      feesNum:        d.fees || 0,
+      phone:          d.phone || "",
+      initials:       (d.name || "DR")
+                        .split(" ")
+                        .map((w) => w[0])
+                        .join("")
+                        .toUpperCase()
+                        .slice(0, 2),
+      available:      true, // default available — extend later
+      rating:         4.8,  // placeholder — extend with reviews later
+      reviews:        0,
+      languages:      ["English", "Hindi"],
+      education:      d.specialization || "—",
+    }));
+
+    return res.json({ doctors: mapped });
+  } catch (err) {
+    console.error("get doctors error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
 // All routes below require doctor role
 const doctorOnly = protectRole("doctor");
 
