@@ -67,12 +67,12 @@ export const login = async (req, res) => {
 
     return res.json({
       token,
-      user: { 
-        _id: user._id, 
-        name: user.name, 
-        email: user.email, 
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
         phone: user.phone,
-        role: user.role 
+        role: user.role
       },
     });
   } catch (err) {
@@ -178,13 +178,14 @@ export const sendOtp = async (req, res) => {
 
     // ✅ Send email (prod mein sendEmail use karo, dev mein console)
     try {
-      await sendEmail({
-        to: email,
-        subject: "Your Flexi4U OTP",
-        text: `Your OTP is: ${otp}. Valid for 5 minutes.`,
-      });
-    } catch {
-      console.log("Email failed, OTP:", otp); // fallback for dev
+      await sendEmail(
+        email,
+        "Your Flexi4U OTP",
+        `Your OTP is: ${otp}. Valid for 5 minutes.`
+      );
+    } catch (err) {
+      console.log("EMAIL FAILED:", err);
+      console.log("OTP fallback:", otp);
     }
 
     // ⚠️ REMOVE otp from response in production
@@ -233,8 +234,8 @@ export const resetPasswordWithOtp = async (req, res) => {
     if (account.otp !== otp || account.otpExpiry < Date.now())
       return res.status(400).json({ message: "Invalid or expired OTP" });
 
-    account.password  = await bcrypt.hash(password, 10);
-    account.otp       = null;
+    account.password = await bcrypt.hash(password, 10);
+    account.otp = null;
     account.otpExpiry = null;
     await account.save();
 
