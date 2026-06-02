@@ -160,7 +160,10 @@ export const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
 
-    // Check user first, then doctor
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
     let account = await User.findOne({ email });
     let isDoctor = false;
 
@@ -176,20 +179,38 @@ export const sendOtp = async (req, res) => {
     account.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 min
     await account.save();
 
-    // ✅ Send email (prod mein sendEmail use karo, dev mein console)
+
+    const subject = `${otp} is your Flexi4U verification code`;
+    
+    const textContent = `Hello,\n\nYour Flexi4U verification code is: ${otp}\n\nThis code is valid for 5 minutes. If you did not request this, please safely ignore this email.\n\nBest,\nFlexi4U Team`;
+
+    const htmlContent = `
+      <div style="font-family: Helvetica, Arial, sans-serif; min-width: 1000px; overflow: auto; line-height: 2">
+        <div style="margin: 50px auto; width: 70%; padding: 20px 0">
+          <div style="border-bottom: 1px solid #eee">
+            <a href="https://flexi4u.com" style="font-size: 1.4em; color: #00466a; text-decoration: none; font-weight: 600">Flexi4U</a>
+          </div>
+          <p style="font-size: 1.1em">Hi there,</p>
+          <p>Thank you for choosing Flexi4U. Use the following OTP to complete your verification process. This OTP is valid for <strong>5 minutes</strong>.</p>
+          <h2 style="background: #00466a; margin: 20px auto; width: max-content; padding: 10px 20px; color: #fff; border-radius: 4px; letter-spacing: 2px;">${otp}</h2>
+          <p style="font-size: 0.9em; margin-top: 30px; color: #666;">If you didn't request this code, you can safely ignore this email. Your account is secure.</p>
+          <hr style="border: none; border-top: 1px solid #eee" />
+          <div style="float: left; padding: 8px 0; color: #aaa; font-size: 0.8em; line-height: 1; font-weight: 300">
+            <p>Flexi4U Team</p>
+            <p>Secure Account Services</p>
+          </div>
+        </div>
+      </div>
+    `;
+
     try {
-      await sendEmail(
-        email,
-        "Your Flexi4U OTP",
-        `Your OTP is: ${otp}. Valid for 5 minutes.`
-      );
+      await sendEmail(email, subject, textContent, htmlContent);
     } catch (err) {
       console.log("EMAIL FAILED:", err);
       console.log("OTP fallback:", otp);
     }
 
-    // ⚠️ REMOVE otp from response in production
-    return res.json({ message: "OTP sent to email" });
+    return res.json({ message: "OTP sent to email successfully" });
   } catch (err) {
     console.error("sendOtp error:", err);
     return res.status(500).json({ message: "Server error" });
