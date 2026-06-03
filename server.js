@@ -8,6 +8,7 @@ import passport from "./config/passport.js";
 import authRoutes        from "./routes/authRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import doctorRoutes      from "./routes/Doctorroutes.js";
+import userRoutes        from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ mongoose
 app.use("/api/auth",         authRoutes);         // login, register, otp
 app.use("/api/appointments", appointmentRoutes);  // user appointments
 app.use("/api/doctors",      doctorRoutes);       // doctor dashboard routes
+app.use("/api/users",        userRoutes);         // user profile routes 
 
 // ─── Test Route ──────────────────────────────────────────────────────────────
 app.get("/", (req, res) => res.send("✅ Flexi4U API Running"));
