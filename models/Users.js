@@ -6,33 +6,36 @@ const userSchema = new mongoose.Schema(
         type: String, 
         trim: true 
     },
-
     email:  { 
         type: String, 
         unique: true, 
         lowercase: true, 
         trim: true 
     },
-
     phone:  { 
         type: String, 
         trim: true 
     },
-
     password: String,
-
-    // ✅ role field add kiya — "user" | "doctor" | "admin"
     role: {
       type: String,
       enum: ["user", "doctor", "admin"],
       default: "user",
     },
 
-    // OTP fields
+    appointmentsCount: { type: Number, default: 0 },
+    reportsCount:      { type: Number, default: 0 },
+    joinedYear:       { type: Number, default: new Date().getFullYear() }, 
+
+    bloodGroup: { type: String, trim: true, default: "" },
+    height:     { type: String, trim: true, default: "" }, 
+    weight:     { type: String, trim: true, default: "" }, 
+    age:        { type: String, trim: true, default: "" }, 
+    bmi:        { type: String, trim: true, default: "" },
+    conditions: { type: String, trim: true, default: "None" },
+
     otp:       { type: String, default: null },
     otpExpiry: { type: Date,   default: null },
-
-    // Reset token (unused but kept)
     resetToken:       String,
     resetTokenExpiry: Date,
   },
