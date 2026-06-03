@@ -1,4 +1,4 @@
-import User from "../models/User.js"; // Aapka user model path yahan dalein
+import User from "../models/Users.js"; // Aapka user model path yahan dalein
 
 // @desc    Update user profile
 // @route   PUT /api/users/profile
