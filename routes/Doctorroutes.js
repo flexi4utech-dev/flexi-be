@@ -6,13 +6,34 @@ import { getDoctorById } from "../controllers/doctorDetailsController.js";
 
 const router = express.Router();
 
-// ─── GET /api/doctors — PUBLIC — approved doctors list (for patient frontend) ─
+// ============================================================================
+// 🟢 PUBLIC ROUTES (For Patients / Users)
+// ============================================================================
+
+// ─── GET /api/doctors — Get all approved doctors (with Search & Mapping) ────
 router.get("/", async (req, res) => {
   try {
-    const doctors = await Doctor.find({ approved: true })
-      .select("-password -otp -otpExpiry")
-      .lean();
+    const { specialization, search, limit } = req.query;
+    
+    // Sirf approved doctors dikhayenge
+    let query = { approved: true };
 
+    // Search and Filter logic
+    if (specialization && specialization !== "All") {
+      query.specialization = { $regex: new RegExp(specialization, "i") };
+    }
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    let dbQuery = Doctor.find(query).select("-password -otp -otpExpiry").lean();
+    if (limit) {
+      dbQuery = dbQuery.limit(Number(limit));
+    }
+
+    const doctors = await dbQuery;
+
+    // Frontend ke liye exact expected format me map kar rahe hain
     const mapped = doctors.map((d) => ({
       id:             d._id,
       name:           d.name,
@@ -27,28 +48,26 @@ router.get("/", async (req, res) => {
                         .join("")
                         .toUpperCase()
                         .slice(0, 2),
-      available:      true, // default available — extend later
-      rating:         4.8,  // placeholder — extend with reviews later
-      reviews:        0,
-      languages:      ["English", "Hindi"],
+      available:      d.available !== undefined ? d.available : true,
+      rating:         d.rating || 4.8, 
+      reviews:        d.reviewsCount || 0,
+      languages:      d.languages?.length ? d.languages : ["English", "Hindi"],
       education:      d.specialization || "—",
     }));
 
-    return res.json({ doctors: mapped });
+    return res.json({ success: true, count: mapped.length, doctors: mapped });
   } catch (err) {
     console.error("get doctors error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 });
 
-// Endpoint will be: /api/doctors/:id
-router.get("/:id", getDoctorById);
 
-// getAllDoctors route
-router.get("/", getAllDoctors);
+// ============================================================================
+// 🔴 PROTECTED ROUTES (For Doctors Only)
+// Note: Inko hamesha "/:id" wale route se UPAR rakhna zaroori hai!
+// ============================================================================
 
-
-// All routes below require doctor role
 const doctorOnly = protectRole("doctor");
 
 // ─── GET /api/doctors/profile ────────────────────────────────────────────────
@@ -77,7 +96,7 @@ router.get("/appointments", doctorOnly, async (req, res) => {
 
     // Map to consistent shape for frontend
     const mapped = appointments.map((a) => ({
-      _id:         a._id,
+      _id:          a._id,
       patientName:  a.user?.name  || "Unknown",
       patientEmail: a.user?.email || "",
       patientPhone: a.user?.phone || "",
@@ -189,5 +208,14 @@ router.get("/analytics", doctorOnly, async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
+
+
+// ============================================================================
+// 🟢 PUBLIC ROUTE (DYNAMIC ID)
+// ============================================================================
+
+// ─── GET /api/doctors/:id — Public Doctor Profile ───────────────────────────
+// Is route ko sabse neeche rakhna mandatory hai
+router.get("/:id", getDoctorById);
 
 export default router;
