@@ -1,4 +1,4 @@
-import Doctor from "../models/Doctor.js"; // Aapka model jahan doctor ka data save ho raha hai
+import Doctor from "../models/Doctor.js";
 
 // @desc    Get single doctor details by ID
 // @route   GET /api/doctors/:id

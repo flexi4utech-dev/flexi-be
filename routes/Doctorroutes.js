@@ -2,7 +2,7 @@ import express from "express";
 import { protectRole } from "../middlewares/authMiddleware.js";
 import Doctor from "../models/Doctor.js";
 import Appointment from "../models/Appointment.js";
-import { getDoctorById } from "../controllers/doctorController.js";
+import { getDoctorById } from "../controllers/doctorDetailsController.js";
 
 const router = express.Router();
 
