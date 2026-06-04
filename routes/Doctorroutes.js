@@ -2,7 +2,7 @@ import express from "express";
 import { protectRole } from "../middlewares/authMiddleware.js";
 import Doctor from "../models/Doctor.js";
 import Appointment from "../models/Appointment.js";
-import { getDoctorById } from "../controllers/doctorDetailsController.js";
+import { getDoctorById, updateDoctorProfile } from "../controllers/doctorDetailsController.js";
 
 const router = express.Router();
 
@@ -69,6 +69,9 @@ router.get("/", async (req, res) => {
 // ============================================================================
 
 const doctorOnly = protectRole("doctor");
+
+// ─── PUT /api/doctors/profile ─── (Doctor ko apni profile update karne ke liye)
+router.put("/profile", doctorOnly, updateDoctorProfile);
 
 // ─── GET /api/doctors/profile ────────────────────────────────────────────────
 router.get("/profile", doctorOnly, async (req, res) => {

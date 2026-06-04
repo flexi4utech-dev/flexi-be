@@ -75,3 +75,34 @@ export const getDoctorById = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error while fetching doctor details" });
   }
 };
+
+export const updateDoctorProfile = async (req, res) => {
+  try {
+    const doctorId = req.user.id; // protectRole middleware se aayega
+    const updates = req.body;
+
+    // Security: Protect sensitive fields from being updated directly via this route
+    delete updates.password;
+    delete updates.role;
+    delete updates.approved;
+    delete updates.email; // Email change usually requires OTP verification, so we block it here
+    delete updates.otp;
+    delete updates.otpExpiry;
+
+    // Find and update the doctor
+    const updatedDoctor = await Doctor.findByIdAndUpdate(
+      doctorId,
+      { $set: updates },
+      { new: true, runValidators: true } // new: true returns the updated document
+    ).select("-password -otp -otpExpiry");
+
+    if (!updatedDoctor) {
+      return res.status(404).json({ success: false, message: "Doctor not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Profile updated successfully", doctor: updatedDoctor });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    res.status(500).json({ success: false, message: "Server error while updating profile" });
+  }
+};
