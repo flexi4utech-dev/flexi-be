@@ -2,6 +2,7 @@ import express from "express";
 import { protectRole } from "../middlewares/authMiddleware.js";
 import Doctor from "../models/Doctor.js";
 import Appointment from "../models/Appointment.js";
+import { getDoctorById } from "../controllers/doctorController.js";
 
 const router = express.Router();
 
@@ -39,6 +40,13 @@ router.get("/", async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
+
+// Endpoint will be: /api/doctors/:id
+router.get("/:id", getDoctorById);
+
+// getAllDoctors route
+router.get("/", getAllDoctors);
+
 
 // All routes below require doctor role
 const doctorOnly = protectRole("doctor");
